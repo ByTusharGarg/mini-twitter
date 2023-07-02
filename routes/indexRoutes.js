@@ -12,7 +12,7 @@ indexRoutes.get("/feed", async (req, res) => {
   try {
     const { user } = req;
     const { username, followers } = user;
-    let users = await User.find({ username: { $in: followers } });
+    let users = await User.find({ followers: username });
     users = users.map((item) => item._id);
     const docs = await Tweet.find({
       isRetweeted: false,
