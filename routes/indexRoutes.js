@@ -11,8 +11,13 @@ indexRoutes.get("/feed", async (req, res) => {
   const tweetsToSkip = req.query.t || 0;
   try {
     const { user } = req;
-    const { username } = user;
-    const docs = await Tweet.find({ isRetweeted: false })
+    const { username, followers } = user;
+    let users = await User.find({ username: { $in: followers } });
+    users = users.map((item) => item._id);
+    const docs = await Tweet.find({
+      isRetweeted: false,
+      postedBy: { $in: users },
+    })
       .populate("postedBy")
       .populate("comments")
       .sort({ createdAt: -1 })
